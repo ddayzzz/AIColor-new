@@ -143,7 +143,7 @@ var styleImageApp = new Vue({
         },
         saveToFile: function () {
             var canvas = document.getElementById('canvasProcessedImage');
-            var dt = canvas.toDataURL('image/jpeg').replace("image/jpeg", "image/octet-stream");;
+            var dt = canvas.toDataURL('image/jpeg').replace("image/jpeg", "image/octet-stream");
             this.dataUrl = dt;
         },
         upload: function(){

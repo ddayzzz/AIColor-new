@@ -1,8 +1,14 @@
 import logging
 import numpy as np
-import chainer
-from chainer import cuda, serializers, Variable  # , optimizers, training
-import cv2
+try:
+    import chainer
+    from chainer import cuda, serializers, Variable  # , optimizers, training
+    import cv2
+except NameError:
+    pass
+except ImportError:
+    pass
+
 import os.path
 from genColorForAnimation.imageDataset import ImageAndRefDataset
 from genColorForAnimation import unet, lnet

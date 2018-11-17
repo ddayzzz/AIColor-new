@@ -53,8 +53,8 @@
                         <div class="uk-height-large uk-flex uk-flex-center uk-flex-middle uk-background-cover"
                             v-bind:style="getProcessedImageSrcInCss">
                             <!--用于显示处理后的图片-->
-                            <h1 class="uk-heading-primary" v-if="status=='processing'">处理中....</h1>
-                            <h1 class="uk-heading-primary" v-if="status=='failed'">处理失败</h1>
+                            <h1 class="uk-heading-primary" v-if="status=='processing'"><span class="uk-margin-small-right" uk-spinner="ratio: 3"></span>处理中....</h1>
+                            <h1 class="uk-heading-primary" v-if="status=='failed'"><span uk-icon="icon: close; ratio: 3"></span> 处理失败</h1>
 
                         </div>
                     </div>

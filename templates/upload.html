@@ -1,6 +1,9 @@
 {% extends '__base__.html' %}
 {% block title %}AIColor - 上传页面{% endblock %}
 {% block meta %}
+<link rel="stylesheet" href="/static/css/uikit.min.css" />
+    <script src="/static/js/uikit.min.js"></script>
+    <script src="/static/js/uikit-icons.min.js"></script>
 <script type="text/javascript" src="/static/js/vue.js"></script>
 </script>
 {% endblock %}
@@ -79,7 +82,7 @@ UIkit.upload('#upload-placeholder', {
             bar.setAttribute('hidden', 'hidden');
         }, 1000);
 
-        alert('Upload Completed');
+        UIkit.notification({message: '<span uk-icon=\'icon: check\'></span> 上传成功！'})
     }
 
 });

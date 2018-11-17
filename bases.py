@@ -225,36 +225,41 @@ avaiableModelsForBrowser = {
         {
             'id': 0,
             'name': 'Des Glaneuses',
-            'desc': 'Des Glaneuses',
-            'image': 'templates/genStyleOnBrowser/images/style1.jpg',
+            'desc': 'Des Glaneuses - 拾穗者，让-弗朗索瓦·米勒',
+            'image128': 'static/images/onBrowser/128/style1.jpg',
+            'image256': 'static/images/onBrowser/256/style1.jpg',
             'modelJsonUrl': 'templates/genStyleOnBrowser/style1/model.json'
         },
         {
             'id': 1,
             'name': 'La Muse',
-            'desc': 'La Muse',
-            'image': 'templates/genStyleOnBrowser/images/style2.jpg',
+            'desc': 'La Muse - 毕加索',
+            'image128': 'static/images/onBrowser/128/style2.jpg',
+            'image256': 'static/images/onBrowser/256/style2.jpg',
             'modelJsonUrl': 'templates/genStyleOnBrowser/style2/model.json'
         },
         {
             'id': 2,
             'name': 'Mirror',
-            'desc': 'Mirror',
-            'image': 'templates/genStyleOnBrowser/images/style3.jpg',
+            'desc': 'Mirror - 镜子前的女孩，毕加索',
+            'image128': 'static/images/onBrowser/128/style3.jpg',
+            'image256': 'static/images/onBrowser/256/style3.jpg',
             'modelJsonUrl': 'templates/genStyleOnBrowser/style3/model.json'
         },
         {
             'id': 3,
             'name': 'Udnie',
-            'desc': 'Udnie',
-            'image': 'templates/genStyleOnBrowser/images/style4.jpg',
+            'desc': 'Udnie - 弗朗西斯·毕卡比亚',
+            'image128': 'static/images/onBrowser/128/style4.jpg',
+            'image256': 'static/images/onBrowser/256/style4.jpg',
             'modelJsonUrl': 'templates/genStyleOnBrowser/style4/model.json'
         },
         {
             'id': 4,
             'name': 'Wave',
-            'desc': 'Wave',
-            'image': 'templates/genStyleOnBrowser/images/style5.jpg',
+            'desc': 'Wave - 浮士绘，葛饰北斋',
+            'image128': 'static/images/onBrowser/128/style5.jpg',
+            'image256': 'static/images/onBrowser/256/style5.jpg',
             'modelJsonUrl': 'templates/genStyleOnBrowser/style5/model.json'
         }
     ]

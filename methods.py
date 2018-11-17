@@ -22,7 +22,10 @@ except NameError:
 from enum import Enum
 
 __style_model = os.sep.join(('styleChanger', 'models'))
-__animationColorizer = AnimationColorizer(0)
+try:
+    __animationColorizer = AnimationColorizer(0)
+except NameError:
+    pass
 
 
 

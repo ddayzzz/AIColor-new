@@ -11,14 +11,14 @@
         <!--介绍性文字-->
         <div class="uk-card uk-card-primary uk-card-body">
             <h3 class="uk-card-title"><span uk-icon="icon: image; ratio: 2" class="uk-margin-small-right"></span>您可以选择已经加载的模型离线地处理您的图片。</h3>
-            <p>处理您的图片，您可以其他用户分享您的图片。</p>
+            <p>风格化您的图片，您可以将结果保存到本地。</p>
         </div>
         <!--介绍模型相关的信息-->
         <div id="model-description" class="uk-card uk-card-default uk-grid-collapse uk-child-width-1-2@s uk-margin"
             uk-grid>
             <div class="uk-card-media-left uk-cover-container">
-                <img src="{{model.image}}" alt="" uk-cover>
-                <canvas width="600" height="400"></canvas>
+                <img src="{{model.image256}}" alt="" uk-cover>
+                <canvas width="256" height="256"></canvas>
             </div>
             <div>
                 <div class="uk-card-body">
@@ -65,7 +65,7 @@
                         {% endif %}
                     </h1>
                     <p>目前，您的图片没有上传到服务器，不用担心数据泄漏的问题。您可以保存到您的计算机或者上传到服务器以便与他人分享。</p>
-                    <a v-bind:href="downloadLink"><button class="uk-button uk-button-primary" type="button" style="cursor:pointer" :click="saveToFile()">保存到本地</button></a>
+                    <a v-bind:href="downloadLink"><button class="uk-button uk-button-primary" type="button" style="cursor:pointer" :click="saveToFile()" download="图片.jpg">保存到本地</button></a>
                     {% if username %}
                     <button class="uk-button uk-button-primary" type="button" style="cursor:pointer" :click="upload()">上传到服务器</button>
                     {% endif %}

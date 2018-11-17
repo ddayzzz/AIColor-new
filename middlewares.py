@@ -51,6 +51,14 @@ def post_json_factory():
     return post_json_middleware
 
 
+def errorBody(request, templateFile, dictData=None):
+    ret = {'username': request.__user__.username if request.__user__ else None}
+    if dictData:
+        ret.update(dictData)
+
+
+    return request.app.template.get_template(templateFile).render(**ret).encode('utf-8')
+
 # 响应的抽象工厂
 def response_factory():
     """
@@ -105,24 +113,30 @@ def response_factory():
             # 由于 websocket 可能返回特殊的响应，如果这种情况，系统会自动处理
         except web.HTTPNotFound as ne:
             logging.error('{req}:{code}'.format(req=request.path, code=ne.status), exc_info=True)
-            return web.Response(status=ne.status, body='Not Found')
+            return web.Response(status=ne.status, body=errorBody(request, 'errors/404.html'), content_type='text/html', charset='utf-8')
         except web.HTTPBadRequest as ne:
             logging.error('{req}:{code}'.format(req=request.path, code=ne.status), exc_info=True)
-            return web.Response(status=ne.status, body='Bad Request')
+            return web.Response(status=ne.status, body=errorBody(request, 'errors/400.html'), content_type='text/html', charset='utf-8')
         except web.HTTPForbidden as ne:
             logging.error('{req}:{code}'.format(req=request.path, code=ne.status), exc_info=True)
-            return web.Response(status=ne.status, body='Forbidden: Please login before.')
+            return web.Response(status=ne.status, body=errorBody(request, 'errors/403.html', {'redirect': request.path}), content_type='text/html', charset='utf-8')
         except web.HTTPMethodNotAllowed as ne:
             logging.error('{req}:{code}'.format(req=request.path, code=ne.status), exc_info=True)
-            return web.Response(status=ne.status, body='MethodNotAllowed')
+            return web.Response(status=ne.status, body=errorBody(request, 'errors/405.html'), content_type='text/html', charset='utf-8')
         except Exception as e:
             logging.error('内部错误：', exc_info=True)
             dictData = {'status': 5, 'data': {
                 'exception': e.__class__.__name__,
                 'traceback': traceback.format_exc(),
+                'stackinfo': traceback.format_stack(),
                 'message': repr(e)
             }}
-            resp = web.Response(status=501, body=json.dumps(dictData, ensure_ascii=False).encode('utf-8'))
-            resp.content_type = 'application/json;charset=utf-8'
+
+            if request.method == 'POST':
+                resp = web.Response(status=501, body=json.dumps(dictData, ensure_ascii=False).encode('utf-8'))
+                resp.content_type = 'application/json;charset=utf-8'
+            else:
+                # GET OR other
+                resp = web.Response(status=501, body=errorBody(request, 'errors/501.html', dictData['data']), content_type='text/html', charset='utf-8')
             return resp
     return response  # 处理完成 现在都是Response的对象 接下来就有路由关联的函数处理，也就是ResponseHandler

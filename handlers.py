@@ -11,7 +11,7 @@ import models
 import methods
 from aiohttp import web
 from bases import ImageSource, next_id, avaiableModels, getImageFilePath, getTargetImageByIdAndSource, getImageFileInDB
-from bases import UploadImageMaxHeight, UploadImageMaxWidth
+from bases import UploadImageMaxHeight, UploadImageMaxWidth, get_loggined_username_or_denied
 
 from socialHandlers import _get_postId as get_postId  # 获取某个图片的关联ID
 # 图像中间处理
@@ -302,13 +302,12 @@ async def get_ImageItem(request, imageId, imageSourceIndex):
         return 404
 
 async def get_uploadRequest(request):
-    if not request.__user__:
-        return '<p>请您先登录<p><br><a href="/signin">登录</a>'
-    else:
-        return {
-            '__template__': 'upload.html',
-            'username': request.__user__.username
-        }
+    username = get_loggined_username_or_denied(request=request)
+    return {
+        '__template__': 'upload.html',
+        'username': username
+    }
+
 
 
 async def basic_api_get_userBasedModel(request, sourceIndex):
@@ -323,12 +322,3 @@ async def basic_api_get_userBasedModel(request, sourceIndex):
     if not models:
         raise ValueError('无效的参数：sourceIndex=%d, 目前经支持1和2。' % sourceIndex)
     return {'models': models}
-
-
-async def basic_api_get_onBrowserModels(request, sourceIndex):
-    """
-    获取支持浏览器版本的模型
-    :param request:
-    :param sourceIndex: 图像来源（仅支持1和2）
-    :return:
-    """

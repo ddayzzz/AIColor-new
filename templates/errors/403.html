@@ -1,0 +1,22 @@
+{% extends '__base__.html' %}
+{% block title %}AIColor - 403：请您登录 AIColor{% endblock %}
+
+{% block content %}
+<div class="uk-container" >
+    <div>
+        <!--介绍性文字-->
+        <div class="uk-card uk-card-primary uk-card-body">
+            <h3 class="uk-card-title"><span uk-icon="icon: warning; ratio: 2" class="uk-margin-small-right"></span>您需要登录 AIColor 才能继续操作。</h3>
+            <p>登录后将继续处理您的请求。</p>
+            {% if redirect %}
+            <a class="uk-button uk-button-primary" href="/signin?redirect={{redirect}}">登录</a>
+            <a class="uk-button uk-button-default" href="/register?redirect={{redirect}}">注册</a>
+            {% else %}
+            <a class="uk-button uk-button-primary" href="/signin?redirect=/">登录</a>
+            <a class="uk-button uk-button-default" href="/register?redirect=/">注册</a>
+            {% endif %}
+        </div>
+
+    </div>
+</div>
+{% endblock %}

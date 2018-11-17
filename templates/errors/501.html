@@ -1,0 +1,46 @@
+{% extends '__base__.html' %}
+{% block title %}AIColor - 501：出错啦{% endblock %}
+
+{% block content %}
+<div class="uk-container" id="style-changer-app">
+    <div>
+        <!--介绍性文字-->
+        <div class="uk-card uk-card-primary uk-card-body">
+            <h3 class="uk-card-title"><span uk-icon="icon: warning; ratio: 2" class="uk-margin-small-right"></span>501
+                - 服务器内部故障。</h3>
+            <p>Oops! Something wrong happend!</p>
+            
+        </div>
+        <div class="uk-card uk-card-default uk-card-body">
+            <ul uk-accordion="multiple: true">
+                <li class="uk-open">
+                    <a class="uk-accordion-title" href="#">错误类型</a>
+                    <div class="uk-accordion-content">
+                        <p class="uk-text-danger">服务器的错误类型：{{exception}}</p>
+                    </div>
+                </li>
+                <li>
+                    <a class="uk-accordion-title" href="#">跟踪</a>
+                    <div class="uk-accordion-content">
+                        <p class="uk-text-danger">{{traceback}}</p>
+                    </div>
+                </li>
+                <li>
+                    <a class="uk-accordion-title" href="#">调用堆栈</a>
+                    <div class="uk-accordion-content">
+                        <p class="uk-text-danger">{{stackinfo}}
+                        </p>
+                    </div>
+                </li>
+                <li>
+                    <a class="uk-accordion-title" href="#">错误消息</a>
+                    <div class="uk-accordion-content">
+                        <p class="uk-text-danger">{{message}}</p>
+                    </div>
+                </li>
+                
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}
