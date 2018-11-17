@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <script type="text/javascript" src="/static/js/jquery-3.2.1.min.js"></script>
+    <!--导入uikit的基本的样式 uikit2-->
+    <!--<link type="text/css" rel="stylesheet" href="/static/css/uikit.css"/>-->
+    
+    <!--<script type="text/javascript" src="/static/js/uikit.js"></script>-->
+    <!--uikit 3-->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- <link rel="stylesheet" href="templates/base.css" /> -->
+
+    <!--其他库-->
+    {% block meta %}
+    <!-- block meta -->{% endblock %}
+    <title>{% block title %}?{% endblock %}</title>
+    <!--导入favico图标-->
+    <link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon" />
+    {% block info %}
+    <!--设置页面的信息--> {% endblock %}
+    {% block beforehead %}
+    <!-- before head -->{% endblock %}
+</head>
+
+<body>
+    <!--导航栏部分-->
+    <nav class="uk-navbar-container uk-margin" uk-navbar>
+        <div class="uk-navbar-left">
+    
+            <a class="uk-navbar-item uk-logo" href="#">AIColor</a>
+            <ul class="uk-navbar-nav">
+                <li>
+                    <a href="/">
+                        <span class="uk-icon uk-margin-small-right" uk-icon="icon: location"></span>图片广场</a>
+                </li>
+                <li>
+                    <a href="/upload">
+                        <span class="uk-icon uk-margin-small-right" uk-icon="icon: upload"></span>上传图片</a>
+                </li>
+                <li>
+                    <a href="/upload">
+                        <span class="uk-icon uk-margin-small-right" uk-icon="icon: settings"></span>开发者中心</a>
+                </li>
+            </ul>
+        </div>
+        <div class="uk-navbar-right">
+            <ul class="uk-navbar-nav">
+                <li>
+                    {% if username %}
+                    <a href="#"><span class="uk-icon uk-margin-small-right" uk-icon="icon: user"></span>{{username}}</a>
+                    {% else %}
+                    <a href="#"><span class="uk-icon uk-margin-small-right" uk-icon="icon: sign-in"></span>登录</a>
+                    {% endif %}
+                    <div class="uk-navbar-dropdown">
+                        <ul class="uk-nav uk-navbar-dropdown-nav">
+                            {% if username %}
+                            <li><a href="/zone?username={{username}}">我的主页</a></li>
+                            <li><a href="#">个人设置</a></li>
+                            <li class="uk-nav-divider"></li>
+                            <li><a href="/signout">注销登录</a></li>
+                            {% else %}
+                            <li><a href="/signin?redirect=/">登录</a></li>
+                            <li><a href="/register?redirect=/">注册</a></li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    
+    
+    <!--其他的内容-->
+    <!--content-->
+    {% block content %}
+    {% endblock %}
+    <!--end content-->
+    <!--解决双重图标的问题 https://github.com/uikit/uikit/issues/2441-->
+    <link rel="stylesheet" href="/static/css/uikit.min.css" />
+    <script src="/static/js/uikit.min.js"></script>
+    <script src="/static/js/uikit-icons.min.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,5 @@
+nohup python3 webServer.py --port=8888 --addr=172.17.0.5 --port=8888 --dbname=root --dbhost=172.17.0.1 &
+
+
+docker 运行:
+docker run -d -p 9001:9001 -v /home/ddayzzz/AIColor:/root/AIColor -w /root/AIColor shu/torch7 python3 webServer.py --port=9001 --addr=0.0.0.0 --dbaddr=172.17.0.1 --python_exec=/usr/bin/python3

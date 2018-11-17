@@ -1,0 +1,66 @@
+{% extends '__base__.html' %}
+{% block title %}AIColor - 选择风格化的处理方式{% endblock %}
+{% block meta %}
+<script type="text/javascript" src="/static/js/vue.js"></script>
+<script type="text/javascript" src="/static/js/axios.min.js"></script>
+{% endblock %}
+{% block content %}
+
+<div class="uk-container">
+    <!--选择性文字-->
+    <ul uk-tab>
+        <li class="uk-active"><a href="#">离线风格化</a></li>
+        <li><a href="#">在线风格化</a></li>
+    </ul>
+    <ul class="uk-switcher uk-margin">
+        <li id="all-styled-models">
+            <div class="uk-card uk-card-secondary uk-card-hover uk-card-body uk-light uk-margin">
+                <h3 class="uk-card-title">离线地风格化您的图片</h3>
+                <p>您可以在本机进行风格化处理而不是在服务器上。</p>
+            </div>
+            <div class="uk-margin">
+                <h3 class="uk-heading-divider">可供离线风格化的模型：</h3>
+            </div>
+            <!--选择的模型-->
+            <div class="uk-position-relative uk-visible-toggle" uk-slider>
+                <ul class="uk-slider-items uk-child-width-1-4@l uk-child-width-1-2@m">
+                    {% for model in models %}
+                    <li>
+                        <div class="uk-flex-middle" style="cursor: pointer" onclick="document.location='/styleChanger?modelId={{model.id}}'"
+                            uk-grid>
+                            <div class="uk-width-2-3@m">
+                                <p class="uk-text-meta uk-text-truncate">模型：{{model.name}}<br>
+                                    来源：AIColor<br>
+                                    描述：{{model.desc}}
+                                </p>
+                            </div>
+                            <div class="uk-width-1-3@m uk-flex-first">
+                                <img src="{{model.image}}">
+                            </div>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+                <a class="uk-position-center-left uk-position-small uk-hidden-hover" href="#" uk-slidenav-previous
+                    uk-slider-item="previous"></a>
+                <a class="uk-position-center-right uk-position-small uk-hidden-hover" href="#" uk-slidenav-next
+                    uk-slider-item="next"></a>
+            </div>
+        </li>
+        <li>
+            <div class="uk-card uk-card-primary uk-card-hover uk-card-body uk-light uk-margin">
+                <h3 class="uk-card-title">在线风格化</h3>
+                <p>通过登录您的账户进而在服务器上进行风格化处理。您需要切换到“我的空间”页面</p>
+            </div>
+            <div class="uk-margin">
+                    {% if username %}
+                    <a class="uk-button uk-button-default" href="/zone?username={{username}}">进入我的空间</a>
+                    {% else %}
+                    <a class="uk-button uk-button-primary" href="/signin?redirect=/zone">登录</a>
+                    <a class="uk-button uk-button-default" href="/register?redirect=/zone">注册</a>
+                    {% endif %}
+            </div>
+        </li>
+    </ul>
+</div>
+{% endblock %}

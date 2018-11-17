@@ -1,0 +1,29 @@
+{% extends '__base__.html' %}
+{% block title %}AIColor - 发现页面{% endblock %}
+{% block meta %}
+<script type="text/javascript" src="/static/js/vue.js"></script>
+
+<script type="text/javascript" src="/static/js/axios.min.js"></script>
+<script type="text/javascript" src="/static/js/lodash.min.js"></script>
+{% endblock %}
+{% block content %}
+<div id="flowPage">
+        {% extends '__base__.html' %}
+    <div class="uk-panel uk-panel-box uk-panel-box-primary uk-width-1-2 uk-container-center">
+        <div id="imagesFlow">
+        <so-unit-imageitem
+            v-for="item in imagesList"
+            v-bind:image_item_username="item.username"
+            v-bind:image_item_created_time="item.created_time"
+            v-bind:image_item_id="item.imageId"
+            v-bind:image_item_index="item.srcIndex"
+            v-bind:image_item="item"
+            v-bind:image_item_likes_data="item.likes"
+            v-bind:image_item_comments_data="item.comments"
+            v-bind:key="item.imageId">
+        </so-unit-imageitem><!--不能是uploadImageId 超级奇怪-->
+        </div>
+    </div>
+    <!--一定要最后导入-->
+    <script type="text/javascript" src="/templates/bindData.js"></script>
+    {% endblock %}

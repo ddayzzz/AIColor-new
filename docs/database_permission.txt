@@ -1,0 +1,3 @@
+CREATE USER "aitest"@"%" IDENTIFIED BY "test123";
+create database aicolor;
+grant all privileges on aicolor.* to 'aitest'@'%' identified by 'test123';

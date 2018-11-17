@@ -1,0 +1,15 @@
+
+[Unit]
+Description=AIColor docker daemon service
+After=docker.service
+
+[Service]
+Type=forking
+ExecStart=/usr/bin/docker run -d -p 9001:9001 -v /home/ddayzzz/AIColor:/root/AIColor -w /root/AIColor shu/torch7 python3 webServer.py --port=9001 --addr=0.0.0.0 --dbusername=aitest --dbaddr=172.17.0.1 --dbpasswd=test123
+ExecReload=/usr/bin/docker ps | grep 'shu/torch7' | awk '{i=$1;cmd="/usr/bin/docker stop "i" && /usr/bin/docker run -d -p 9001:9001 -v /home/ddayzzz/AIColor:/root/AIColor -w /root/AIColor shu/torch7 python3 webServer.py --port=9001 --addr=0.0.0.0 --dbusername=aitest --dbaddr=172.17.0.1 --dbpasswd=test123";system(cmd)}'
+ExecStop=/usr/bin/docker ps | grep 'shu/torch7' | awk '{i=$1;cmd="/usr/bin/docker stop "i"";system(cmd)}'
+
+[Install]
+WantedBy=multi-user.target
+
+

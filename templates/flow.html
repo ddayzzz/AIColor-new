@@ -1,0 +1,32 @@
+{% extends '__base__.html' %}
+{% block title %}AIColor - 图片广场{% endblock %}
+{% block meta %}
+<script type="text/javascript" src="/static/js/vue.js"></script>
+<script type="text/javascript" src="/static/js/axios.min.js"></script>
+<script type="text/javascript" src="/static/js/lodash.min.js"></script>
+{% endblock %}
+{% block content %}
+<template id="post_item_template">
+    <div class="uk-card uk-card-default uk-card-body uk-height-medium uk-width-medium uk-background-cover uk-inline-clip uk-transition-toggle"
+        v-bind:data-src="getImageSrc" uk-img>
+        <div class="uk-transition-slide-bottom uk-position-bottom uk-overlay uk-overlay-default uk-dark">
+            <p class="uk-h4 uk-margin-remove uk-text-truncate uk-text-bold">{[post.title]}</p>
+            <p class="uk-h6 uk-margin-remove uk-text-truncate uk-text-muted"><span><a v-bind:href="getUserLink">{[post.username]}</a></span><span>发布于{[post.created_time|convertDateTimeFromEra]}</span></p>
+            <div class="uk-margin-small-top">
+                <a href="#" class="uk-icon-button uk-margin-small-right" title="分享" style="cursor: pointer;" uk-icon="social"></a>
+                <a class="uk-icon-button uk-icon-image uk-margin-small-right" v-on:click="flipLikeStatus()"
+                     uk-icon="heart"></a><!--v-bind:style="LikeCssObj"-->
+                <a href="#" class="uk-icon-button uk-margin-small-right" uk-icon="bolt" title="查看帖子详细信息" v-on:click="viewPost()"
+                    style="cursor: pointer;"></a>
+            </div>
+        </div>
+    </div>
+
+
+
+</template>
+<div class="uk-flex uk-flex-center uk-flex-wrap uk-flex-wrap-around uk-flex-left" id="postFlow">
+    <post-flow-item v-for="(post,index) in posts" v-bind:post="post" v-bind:logined="logined" v-bind:key="index"></post-flow-item>
+</div>
+<script type="text/javascript" src="/templates/flow.js"></script>
+{% endblock %}

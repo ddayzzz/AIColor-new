@@ -1,0 +1,88 @@
+{% extends '__base__.html' %}
+{% block title %}AIColor - 上传页面{% endblock %}
+{% block meta %}
+<script type="text/javascript" src="/static/js/vue.js"></script>
+</script>
+{% endblock %}
+{% block content %}
+<div class="uk-container">
+    <div>
+        <div class="uk-card uk-card-primary uk-card-hover uk-card-body">
+            <h3 class="uk-card-title"><span uk-icon="icon: image; ratio: 2" class="uk-margin-small-right"></span>上传您喜爱的图片，稍后您可以处理它。</h3>
+            <p>您上传的图片将会保存在服务器上，这是您处理图片的基础。您不仅可以处理它也可以分享给他人。如果您需要删除图片，您可以转到个人空间页面。</p>
+        </div>
+    </div>
+    <div>
+        <div id="upload-files-placeholders" class="uk-card uk-card-default uk-card-body uk-margin-small-bottom">
+            <div id="upload-placeholder" class="js-upload uk-placeholder uk-text-center">
+                <span uk-icon="icon: cloud-upload"></span>
+                <span class="uk-text-middle">拖动您的图片至此</span>
+                <div uk-form-custom>
+                    <input type="file" multiple>
+                    <span class="uk-link">或者通过对话框选择</span>
+                </div>
+            </div>
+            <progress id="js-progressbar" class="uk-progress" value="0" max="100" hidden></progress>
+        </div>
+    </div>
+</div>
+<script>
+var bar = document.getElementById('js-progressbar');
+
+UIkit.upload('#upload-placeholder', {
+
+    url: '/api/v1/upload',
+    multiple: true,
+    allow: '*(jpg|jpeg)',
+    msgInvalidMime: '不合法的图片类型：%s',
+    beforeSend: function () {
+        console.log('beforeSend', arguments);
+    },
+    beforeAll: function () {
+        console.log('beforeAll', arguments);
+    },
+    load: function () {
+        console.log('load', arguments);
+    },
+    error: function () {
+        console.log('error', arguments);
+    },
+    complete: function () {
+        console.log('complete', arguments);
+    },
+
+    loadStart: function (e) {
+        console.log('loadStart', arguments);
+
+        bar.removeAttribute('hidden');
+        bar.max = e.total;
+        bar.value = e.loaded;
+    },
+
+    progress: function (e) {
+        console.log('progress', arguments);
+
+        bar.max = e.total;
+        bar.value = e.loaded;
+    },
+
+    loadEnd: function (e) {
+        console.log('loadEnd', arguments);
+        bar.max = e.total;
+        bar.value = e.loaded;
+    },
+
+    completeAll: function () {
+        console.log('completeAll', arguments);
+
+        setTimeout(function () {
+            bar.setAttribute('hidden', 'hidden');
+        }, 1000);
+
+        alert('Upload Completed');
+    }
+
+});
+</script>
+{% endblock %}
+<!--上传的js 顺序不能变化-->

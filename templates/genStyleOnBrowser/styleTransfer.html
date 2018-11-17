@@ -1,0 +1,85 @@
+{% extends '__base__.html' %}
+{% block title %}AIColor - 处理页面{% endblock %}
+{% block meta %}
+<script type="text/javascript" src="/static/js/axios.min.js"></script>
+<script type="text/javascript" src="/static/js/vue.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@0.13.3/dist/tf.min.js"></script>
+{% endblock %}
+{% block content %}
+<div class="uk-container" id="style-changer-app" modelJsonUrl="{{model.modelJsonUrl}}">
+    <div v-if="model != null">
+        <!--介绍性文字-->
+        <div class="uk-card uk-card-primary uk-card-body">
+            <h3 class="uk-card-title"><span uk-icon="icon: image; ratio: 2" class="uk-margin-small-right"></span>您可以选择已经加载的模型离线地处理您的图片。</h3>
+            <p>处理您的图片，您可以其他用户分享您的图片。</p>
+        </div>
+        <!--介绍模型相关的信息-->
+        <div id="model-description" class="uk-card uk-card-default uk-grid-collapse uk-child-width-1-2@s uk-margin"
+            uk-grid>
+            <div class="uk-card-media-left uk-cover-container">
+                <img src="{{model.image}}" alt="" uk-cover>
+                <canvas width="600" height="400"></canvas>
+            </div>
+            <div>
+                <div class="uk-card-body">
+                    <h3 class="uk-card-title">风格化模型：{{model.name}}</h3>
+                    <p>描述：{{model.desc}}</p>
+                </div>
+            </div>
+        </div>
+        <div id="modify-images-page">
+            <!--图片选择工具-->
+            <div class="uk-card uk-card-default uk-card-body uk-margin-small-bottom uk-card-default">
+                <div class="uk-margin">
+                    <h1 class="uk-heading-divider uk-margin-small">1.选择您的图片</h1>
+                </div>
+                <div class="uk-margin">
+                    <div class="js-upload" uk-form-custom>
+                        <input id="chooseLocalFile" type="file" ref="localImageFile" @change="changeSelectedImageFile($event)">
+                        <button class="uk-button uk-button-default" type="button" tabindex="-1" style="cursor:pointer">选择图片</button>
+
+                    </div>
+                    <div class="uk-margin-small-top">
+                        <button class="uk-button uk-button-default" :disabled="toDisableProceeBtn" @click="getStyledImage()"
+                            style="cursor:pointer">立即处理</button>
+                    </div>
+                    <div class="uk-child-width-expand uk-grid-small uk-text-center" uk-grid>
+                        <div class="uk-cover-container uk-margin-small-top">
+                            <canvas id="canvasLocalImage"></canvas>
+                        </div>
+                        <div class="uk-child-width-expand uk-grid-small uk-text-center" uk-grid>
+                            <div class="uk-cover-container uk-margin-small-top">
+                                <canvas id="canvasProcessedImage"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="uk-card uk-card-default uk-card-body uk-margin-small-bottom uk-card-default" v-if="generated !=null">
+                <div class="uk-margin">
+                    <h1 class="uk-heading-divider uk-margin-small">
+                        {% if username %}
+                        2.保存到本地或上传
+                        {% else %}
+                        2.保存到本地
+                        {% endif %}
+                    </h1>
+                    <p>目前，您的图片没有上传到服务器，不用担心数据泄漏的问题。您可以保存到您的计算机或者上传到服务器以便与他人分享。</p>
+                    <a v-bind:href="downloadLink"><button class="uk-button uk-button-primary" type="button" style="cursor:pointer" :click="saveToFile()">保存到本地</button></a>
+                    {% if username %}
+                    <button class="uk-button uk-button-primary" type="button" style="cursor:pointer" :click="upload()">上传到服务器</button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div v-if="model == null">
+        <div class="uk-child-width-expand uk-grid-small uk-text-center" uk-grid>
+            <h1 class="uk-heading-primary"><span class="uk-margin-small-right" uk-spinner="ratio: 3"></span> 正在加载模型....</h1>
+            
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="templates/genStyleOnBrowser/styleTransfer.js"></script>
+{% endblock %}

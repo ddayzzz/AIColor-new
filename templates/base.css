@@ -1,0 +1,7 @@
+.uk-icon {
+	>svg {
+		&:nth-child(2) {
+			display: none;
+		}
+	}
+}

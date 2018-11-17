@@ -1,0 +1,141 @@
+{% extends '__base__.html' %}
+{% block title %}AIColor - 查看帖子{% endblock %}
+{% block meta %}
+<script type="text/javascript" src="/static/js/vue.js"></script>
+<script type="text/javascript" src="/static/js/axios.min.js"></script>
+<script type="text/javascript" src="/static/js/lodash.min.js"></script>
+
+{% endblock %}
+{% block content %}
+<!--定义评论框的模板-->
+<template id="comment-template">
+    <article class="uk-comment uk-comment-primary uk-visible-toggle">
+        <header class="uk-comment-header uk-position-relative" uk-grid>
+            <div class="uk-grid-medium uk-flex-middle" uk-grid>
+                <div class="uk-width-expand">
+                    <h4 class="uk-comment-title uk-margin-remove"><a class="uk-link-reset" v-bind:href="getUserLink">{[co.username]}{[getUserStatus]}{[replyText]}</a></h4>
+                    <p class="uk-comment-meta uk-margin-remove-top"><a class="uk-link-reset" href="#">{[co.created_time|convertDateTimeFromEra]}</a></p>
+                </div>
+            </div>
+            <div class="uk-position-top-right uk-position-small uk-hidden-hover"><a class="uk-link-muted" v-on:click="commitReply()">回复</a></div>
+        </header>
+        <div class="uk-comment-body">
+            <p>{[co.comment]}</p>
+        </div>
+    </article>
+</template>
+<!--添加评论的对话框-->
+<div id="add-comment-modal" uk-modal>
+    <div class="uk-modal-dialog uk-modal-body">
+        <!-- <button class="uk-modal-close-default" type="button" uk-close></button> -->
+        <h2 class="uk-modal-title">{[title]}</h2>
+        <form id="new-comment-info" @submit="submit">
+            <fieldset class="uk-fieldset">
+                <div class="uk-margin">
+                    <textarea class="uk-textarea" rows="5" placeholder="您的评论内容，不超过 200字符。" maxlength="200" minlength="1"
+                        v-model="comment"></textarea>
+                </div>
+                <div class="uk-margin uk-text-right">
+                    <button type="submit" class="uk-button uk-button-primary"><i class="uk-icon-sign-in"></i>添加</button>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+</div>
+
+<div class="uk-container">
+    <div id="postDetail" postid="{{postObj.postId}}" posttitle="{{postObj.title}}" imageid="{{postObj.imageId}}"
+        imagesourceindex="{{postObj.imageSourceIndex}}" createdtime="{{postObj.created_time}}" username="{{postObj.username}}">
+        {% if postObj %}
+        {% if postObj.imageSourceIndex != 0 %}
+        <!--表示非上传的图像-->
+        <div class="uk-card uk-card-default uk-card-body uk-margin-small-bottom">
+            <h2>{{postObj.title}}</h2>
+            <p class="uk-text-blod uk-text-muted">
+                <span><a href="/zone?username={{postObj.username}}">{{postObj.username}}</a></span>
+                <span>发布于{{postObj.created_time|datetime}}</span>
+            </p>
+            {% if postObj.imageSourceIndex == 1 %}
+            <span class="uk-label uk-margin-small-right">风格化的图片</span><span class="uk-label uk-label-success">采用
+                {{imageObj.styledModel}} 模型</span>
+            {% else %}
+            <span class="uk-label uk-margin-small-right">彩色化的图片</span><span class="uk-label uk-label-success">采用
+                {{imageObj.colorizedModel}} 模型</span>
+            {% endif %}
+        </div>
+        <div class="uk-card uk-card-default uk-card-body">
+            <div class="uk-position-relative uk-slideshow" uk-slideshow="animation: fade">
+                <ul class="uk-slideshow-items" style="min-height: 365.625px;">
+                    <li class="uk-active uk-transition-active" style="z-index: -1;">
+                        <img src="/api/v1/getImage?imageId={{postObj.imageId}}&imageSource={{postObj.imageSourceIndex}}"
+                            alt="" uk-cover="" class="uk-cover" >
+                    </li>
+                    <li>
+                        <img src="/api/v1/getImage?imageId={{imageObj.originalImageId}}&imageSource={{imageObj.imageSourceIndex}}"
+                            alt="" uk-cover="" class="uk-cover">
+                    </li>
+                </ul>
+
+                <div class="uk-position-bottom-center uk-position-small">
+                    <ul class="uk-thumbnav">
+                        <li uk-slideshow-item="0" class="uk-active" title="查看处理后（彩色化/风格化）的图片"><a href="#"><img src="/api/v1/getImage?imageId={{postObj.imageId}}&imageSource={{postObj.imageSourceIndex}}"
+                                    width="100" alt=""></a></li>
+                        <li uk-slideshow-item="1"><a href="#" title="查看原图"><img src="/api/v1/getImage?imageId={{imageObj.originalImageId}}&imageSource={{imageObj.imageSourceIndex}}"
+                                    width="100" alt=""></a></li>
+                    </ul>
+                </div>
+            </div>
+            {% else %}
+            <!--上传的图像-->
+            {% endif %}
+            <!--评论框-->
+            <ul uk-tab>
+                <li><a href="#">分享</a></li>
+                <li><a href="#">赞</a></li>
+                <li><a href="#">评论</a></li>
+            </ul>
+            <ul class="uk-switcher uk-margin">
+                <li>还没有人分享此帖子</li>
+                <li>还没有人点赞</li>
+                <li>
+                    <ul uk-accordion="multiple: true">
+                        <li class="uk-open">
+                            <a class="uk-accordion-title" href="#">快速评论</a>
+                            <div class="uk-accordion-content">
+                                <form id="fast-comment-info" @submit="submit">
+                                    <fieldset class="uk-fieldset">
+                                        <div class="uk-margin">
+                                            <textarea class="uk-textarea" rows="5" placeholder="您的评论内容，不超过 200字符。"
+                                                maxlength="200" minlength="1" v-model="comment"></textarea>
+                                        </div>
+                                        <div class="uk-margin uk-text-right">
+                                            <button type="submit" class="uk-button uk-button-primary"><i class="uk-icon-sign-in"></i>添加</button>
+                                        </div>
+                                    </fieldset>
+                                </form>
+                            </div>
+                        </li>
+                        <li>
+                            <a class="uk-accordion-title" href="#">热门评论</a>
+                            <div class="uk-accordion-content">
+                                <div id="comments-app">
+                                    <comment-component v-for="(comment, index) in comments" v-bind:co="comment"
+                                        v-bind:key="index" v-bind:po="post">
+                                    </comment-component>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        <!--结束上传、处理的图像的div-->
+        {% else %}
+        <!--非法的访问-->
+        <h1>Error</h1>
+        {% endif %}
+    </div>
+</div>
+
+<script type="text/javascript" src="/templates/viewPost.js"></script>
+{% endblock %}

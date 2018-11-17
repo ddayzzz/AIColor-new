@@ -1,0 +1,80 @@
+{% extends '__base__.html' %}
+{% block title %}AIColor - 注册{% endblock %}
+{% block meta %}
+<script type="text/javascript" src="/static/js/vue.js"></script>
+<script type="text/javascript" src="/static/js/jquery.form.min.js"></script>
+<script type="text/javascript" src="/static/js/sha1.min.js"></script>
+    <script type="text/javascript" src="/static/js/basic.js"></script>
+<script>
+
+    $(function () {
+        var vm = new Vue({
+            el: '#vm',
+            data: {
+                username: '',
+                password1: '',
+                password2: ''
+            },
+            methods: {
+                submit: function (event) {
+                    event.preventDefault();
+                    var $form = $('#vm');
+
+                    if (!this.username.trim()) {
+                        return $form.showFormError('请输入注册的用户名');
+                    }
+                    if (this.password1.length < 6) {
+                        return $form.showFormError('密码长度至少为6个字符');
+                    }
+                    if (this.password1 !== this.password2) {
+                        return $form.showFormError('两次输入的密码不一致');
+                    }
+
+                    $form.postJSON('/api/v1/register', {
+                        username: this.username.trim(),
+                        passwd_hash: CryptoJS.SHA1(this.username + ':' + this.password1).toString()
+                    }, function (err, r) {
+                        if (err) {
+                            return $form.showFormError(err);
+                        }
+                        {% if redirect %}
+                        location.assign('{{ redirect }}');
+                        {% else %}
+                            location.assign('/');
+                        {% endif %}
+                });
+            }
+        }
+    });
+    $('#vm').show();
+});
+</script>
+
+{% endblock %}
+{% block content %}
+<div class="uk-container uk-container-center">
+    <h1>欢迎注册 AIColor用户！</h1>
+
+    <form id="vm" @submit="submit">
+        <div class="uk-alert uk-alert-danger uk-hidden"></div>
+        <div class="uk-margin">
+            <div class="uk-inline">
+                <input class="uk-input" type="text" placeholder="用户名，例如test1" v-model="username" maxlength="50">
+            </div>
+        </div>
+        <div class="uk-margin">
+            <div class="uk-inline">
+                <input class="uk-input" type="password" placeholder="密码" maxlength="50" v-model="password1">
+            </div>
+        </div>
+        <div class="uk-margin">
+            <div class="uk-inline">
+                <input class="uk-input" type="password" placeholder="重复密码" maxlength="50" v-model="password2">
+            </div>
+        </div>
+        <div class="uk-margin">
+            <button type="submit" class="uk-button uk-button-primary"><i class="uk-icon-user"></i> 注册</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

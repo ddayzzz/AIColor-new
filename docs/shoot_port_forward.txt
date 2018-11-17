@@ -1,0 +1,3 @@
+使用了shoot 代理
+服务端：master 9997 9998服务
+客户端：slaver 监听9997 转发 本地 9999端口：python slaver.py -m ddayzzz.wang:9997 -t 127.0.0.1:9999

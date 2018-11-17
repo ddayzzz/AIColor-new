@@ -1,0 +1,116 @@
+{% extends '__base__.html' %}
+{% block title %}AIColor - {{username}} 的个人空间{% endblock %}
+{% block meta %}
+<script type="text/javascript" src="/static/js/vue.js"></script>
+<script type="text/javascript" src="/static/js/axios.min.js"></script>
+<script type="text/javascript" src="/static/js/lodash.min.js"></script>
+{% endblock %}
+{% block content %}
+
+<!--创建帖子模板-->
+<div id="create-post-modal" uk-modal>
+    <div class="uk-modal-dialog uk-modal-body">
+        <h2 class="uk-modal-title">创建新的帖子</h2>
+        <form id="create-post-form" @submit="submit">
+            <fieldset class="uk-fieldset">
+                <div class="uk-margin">
+                    <input class="uk-input" type="text" placeholder="标题，不超过100字" v-model="title" maxlength="100"
+                        minlength="1">
+                </div>
+                <div class="uk-margin">
+                    <div class="uk-card-media-left uk-cover-container">
+                        <img v-bind:src="getImageSrc"
+                            alt="" uk-cover>
+                    </div>
+                </div>
+                <div class="uk-margin uk-text-right">
+                    <button type="submit" class="uk-button uk-button-primary"><i class="uk-icon-sign-in"></i>创建</button>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+</div>
+
+<!--图片流模板-->
+<template id="image-flow-unit-template">
+    <div class="uk-card uk-card-default uk-card-body uk-height-medium uk-width-medium uk-background-cover uk-inline-clip uk-transition-toggle"
+        v-bind:data-src="getImageSrc" uk-img>
+        <div class="uk-transition-slide-bottom uk-position-bottom uk-overlay uk-overlay-default uk-dark">
+            <p class="uk-h4 uk-margin-remove uk-text-truncate uk-text-bold">上传于{[image_item_created_time|convertDateTimeFromEra]}</p>
+            <div class="uk-margin-small-top">
+                <a href="#" class="uk-icon-button uk-margin-small-right" title="分享" style="cursor: pointer;" uk-icon="social"></a>
+                {% if username == targetUsername %}
+                <!--同一个用户访问自己的页面-->
+                <a v-if="image_item_index==0" href="#" class="uk-icon-button uk-margin-small-right" uk-icon="cog"
+                    title="彩色化、风格化处理" v-on:click="processImage()" style="cursor: pointer;"></a>
+                <a v-if="image_item.postId ==null" href="#" class="uk-icon-button uk-margin-small-right" uk-icon="forward"
+                    title="发布此图片（作为帖子）" v-on:click="createPost()" style="cursor: pointer;"></a>
+                <a v-if="image_item.postId != null" href="#" class="uk-icon-button uk-margin-small-right" uk-icon="bolt"
+                    title="查看关联的帖子" v-on:click="viewPost()" style="cursor: pointer;"></a>
+                <a href="#" class="uk-icon-button uk-margin-small-right" uk-icon="close" title="从服务中删除此图片" v-on:click="viewPost()"
+                    style="cursor: pointer;"></a>
+                {% else %}
+                <a v-if="image_item.postId != null" href="#" class="uk-icon-button uk-margin-small-right" uk-icon="bolt"
+                    title="查看关联的帖子" v-on:click="viewPost()" style="cursor: pointer;"></a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</template>
+<!-- 列表的分页容器 -->
+<div id="ce_post_dialog" class="uk-modal">
+    <div class="uk-modal-dialog">
+        <a class="uk-modal-close uk-close"></a>
+        <ce-post-dialog-componet v-bind:title="title" v-bind:a="imageSrc" v-bind:b="imageId" v-bind:model="model"
+            v-bind:create_post="create_post">
+        </ce-post-dialog-componet>
+
+    </div>
+</div>
+<div id="flowPage">
+    <div class="uk-card uk-card-default uk-grid-collapse uk-child-width-1-2@s uk-margin" uk-grid>
+        <div class="uk-card-media-left uk-cover-container">
+            <img src="images/light.jpg" alt="" uk-cover>
+            <canvas width="600" height="400"></canvas>
+        </div>
+        <div>
+            <div class="uk-card-body">
+                <h3 class="uk-card-title"><span uk-icon="icon: image; ratio: 2" class="uk-margin-small-right"></span>关于 {{targetUsername}}。</h3>
+                <p>TA 很懒，似乎没有任何留言。</p>
+            </div>
+        </div>
+    </div>
+    <div class="uk-container">
+        <ul uk-tab>
+            <li class="uk-active"><a href="#">已上传的图片</a></li>
+            <li><a href="#">已风格化的图片</a></li>
+            <li><a href="#">已彩色化的图片</a></li>
+        </ul>
+        <ul class="uk-switcher uk-margin">
+            <li>
+                <div class="uk-flex uk-flex-center uk-flex-wrap uk-flex-wrap-around uk-flex-left" id="upload-image-flow">
+                    <image-flow-unit-item v-for="item in imagesList" v-bind:image_item_created_time="item.created_time"
+                        v-bind:image_item_id="item.imageId" v-bind:image_item_index="0" v-bind:image_item="item"
+                        v-bind:key="item.imageId" v-bind:image_item_model="0">
+                    </image-flow-unit-item>
+                </div>
+
+            </li>
+            <li id="styled-image-flow">
+                <image-flow-unit-item v-for="item in imagesList" v-bind:image_item_created_time="item.created_time"
+                    v-bind:image_item_id="item.imageId" v-bind:image_item_index="1" v-bind:image_item="item" v-bind:key="item.imageId"
+                    v-bind:image_item_model="item.styledModel">
+                </image-flow-unit-item>
+            </li>
+            <li id="colored-image-flow">
+                <image-flow-unit-item v-for="item in imagesList" v-bind:image_item_created_time="item.created_time"
+                    v-bind:image_item_id="item.imageId" v-bind:image_item_index="2" v-bind:image_item="item" v-bind:key="item.imageId"
+                    v-bind:image_item_model="item.colorizedModel">
+                </image-flow-unit-item>
+            </li>
+        </ul>
+    </div>
+</div>
+<!--一定要最后导入-->
+<script type="text/javascript" src="/templates/zone2.js"></script>
+{% endblock %}

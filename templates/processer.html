@@ -1,0 +1,154 @@
+{% extends '__base__.html' %}
+{% block title %}AIColor - 处理页面{% endblock %}
+{% block meta %}
+<script type="text/javascript" src="/static/js/vue.js"></script>
+<script type="text/javascript" src="/static/js/axios.min.js"></script>
+{% endblock %}
+{% block content %}
+
+<div class="uk-container">
+    <!--介绍性文字-->
+    <div class="uk-card uk-card-primary uk-card-body">
+        <h3 class="uk-card-title"><span uk-icon="icon: image; ratio: 2" class="uk-margin-small-right"></span>处理您喜爱的图片，稍后您以此发帖。</h3>
+        <p>处理您的图片，您可以其他用户分享您的图片。</p>
+    </div>
+    <div class="uk-card uk-card-default uk-card-body uk-margin-small-bottom uk-card-default">
+        <ul uk-tab>
+            <li class="uk-active"><a href="#">彩色化</a></li>
+            <li><a href="#">风格化</a></li>
+        </ul>
+        <ul class="uk-switcher uk-margin">
+            <li id="colored-images-page">
+                <!--彩色话处理的表单-->
+                <!--选择的模型-->
+                <div class="uk-position-relative uk-visible-toggle" uk-slider>
+                    <ul class="uk-slider-items uk-child-width-1-4@l uk-child-width-1-2@m">
+                        {% for model in coloredModels %}
+                        <li>
+                            <div class="uk-flex-middle" style="cursor: pointer" v-on:click="selectModel('{{model.name}}')"
+                                uk-grid>
+                                <div class="uk-width-2-3@m">
+                                    <p class="uk-text-meta uk-text-truncate">模型：{{model.name}}<br>
+                                        来源：AIColor<br>
+                                        描述：{{model.desc}}
+                                    </p>
+                                </div>
+                                <div class="uk-width-1-3@m uk-flex-first">
+                                    <img src="{{model.image}}">
+                                </div>
+                            </div>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    <a class="uk-position-center-left uk-position-small uk-hidden-hover" href="#" uk-slidenav-previous
+                        uk-slider-item="previous"></a>
+                    <a class="uk-position-center-right uk-position-small uk-hidden-hover" href="#" uk-slidenav-next
+                        uk-slider-item="next"></a>
+                </div>
+                <!--彩色化提交的表单-->
+                <div v-if="status != 'no-select'">
+                    <div class="uk-margin">
+                        <!--输出选择的信息-->
+                        <h1 class="uk-heading-divider uk-margin-medium-top" v-if="selectedModel != ''">您选择了：{[selectedModel]}</h1>
+                        <div class="uk-height-large uk-flex uk-flex-center uk-flex-middle uk-background-cover"
+                            v-bind:style="getProcessedImageSrcInCss">
+                            <!--用于显示处理后的图片-->
+                            <h1 class="uk-heading-primary" v-if="status=='processing'">处理中....</h1>
+                            <h1 class="uk-heading-primary" v-if="status=='failed'">处理失败</h1>
+
+                        </div>
+                    </div>
+                    <div v-if="status == 'processing' || status == 'finished'">
+                        <div class="uk-margin uk-grid-small uk-child-width-auto uk-grid" v-if="returnImageData != null && returnImageData.postId == null">
+                            <label><input id="post-checkbox" class="uk-checkbox" type="checkbox" v-model="postRequire"
+                                    :disabled="returnImageData !=null && returnImageData.postId != null"> 立即发布为帖子</label>
+                        </div>
+                        <div class="uk-margin" v-if="postRequire && returnImageData != null && returnImageData.postId == null">
+                            <input class="uk-input" placeholder="标题，不超过100字" maxlength="100" v-model="postTitle">
+                        </div>
+                        <div class="uk-margin uk-text-right">
+                            <a href="/zone?username={{username}}" class="uk-button uk-button-default">处理更多的图片</a>
+                            <button class="uk-button uk-button-default" v-if="returnImageData != null && returnImageData.postId != null"
+                                v-on:click="viewPost()">查看关联的帖子</button>
+
+                            <button class="uk-button uk-button-primary" :disabled="toDisableFinishBtn" v-on:click="processPostAfterFinished()">发布为帖子</button>
+                        </div>
+                    </div>
+                    <div v-if="returnImageData == null && status != 'processing'">
+                        <!--所有的失败 returnImageData 都是 null-->
+                        <div class="uk-margin uk-text-right">
+                            <a href="/zone?username={{username}}" class="uk-button uk-button-default">处理更多的图片</a>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li id="styled-images-page">
+                <!--风格话处理的表单-->
+                <!--选择的模型-->
+                <div class="uk-position-relative uk-visible-toggle" uk-slider>
+                    <ul class="uk-slider-items uk-child-width-1-4@l uk-child-width-1-2@m">
+                        {% for model in styledModels %}
+                        <li>
+                            <div class="uk-flex-middle" style="cursor: pointer" v-on:click="selectModel('{{model.name}}')"
+                                uk-grid>
+                                <div class="uk-width-2-3@m">
+                                    <p class="uk-text-meta uk-text-truncate">模型：{{model.name}}<br>
+                                        来源：AIColor<br>
+                                        描述：{{model.desc}}
+                                    </p>
+                                </div>
+                                <div class="uk-width-1-3@m uk-flex-first">
+                                    <img src="{{model.image}}">
+                                </div>
+                            </div>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    <a class="uk-position-center-left uk-position-small uk-hidden-hover" href="#" uk-slidenav-previous
+                        uk-slider-item="previous"></a>
+                    <a class="uk-position-center-right uk-position-small uk-hidden-hover" href="#" uk-slidenav-next
+                        uk-slider-item="next"></a>
+                </div>
+                <!--风格化提交的表单-->
+                <div v-if="status != 'no-select'">
+                    <div class="uk-margin">
+                        <!--输出选择的信息-->
+                        <h1 class="uk-heading-divider uk-margin-medium-top" v-if="selectedModel != ''">您选择了：{[selectedModel]}</h1>
+                        <div class="uk-height-large uk-flex uk-flex-center uk-flex-middle uk-background-cover"
+                            v-bind:style="getProcessedImageSrcInCss">
+                            <!--用于显示处理后的图片-->
+                            <h1 class="uk-heading-primary" v-if="status=='processing'"><span class="uk-margin-small-right" uk-spinner="ratio: 3"></span>处理中....</h1>
+                            <h1 class="uk-heading-primary" v-if="status=='failed'"><span uk-icon="icon: close; ratio: 3"></span> 处理失败</h1>
+
+                        </div>
+                    </div>
+                    <div v-if="status == 'processing' || status == 'finished'">
+                        <div class="uk-margin uk-grid-small uk-child-width-auto uk-grid" v-if="returnImageData != null && returnImageData.postId == null">
+                            <label><input class="uk-checkbox" type="checkbox" v-model="postRequire"
+                                    :disabled="returnImageData !=null && returnImageData.postId != null"> 立即发布为帖子</label>
+                        </div>
+                        <div class="uk-margin" v-if="postRequire && returnImageData != null && returnImageData.postId == null">
+                            <input class="uk-input" placeholder="标题，不超过100字" maxlength="100" v-model="postTitle">
+                        </div>
+                        <div class="uk-margin uk-text-right">
+                            <a href="/zone?username={{username}}" class="uk-button uk-button-default">处理更多的图片</a>
+                            <button class="uk-button uk-button-default" v-if="returnImageData != null && returnImageData.postId != null"
+                                v-on:click="viewPost()">查看关联的帖子</button>
+
+                            <button class="uk-button uk-button-primary" :disabled="toDisableFinishBtn" v-on:click="processPostAfterFinished()">发布为帖子</button>
+                        </div>
+                    </div>
+                    <div v-if="returnImageData == null && status != 'processing'">
+                        <!--所有的失败 returnImageData 都是 null-->
+                        <div class="uk-margin uk-text-right">
+                            <a href="/zone?username={{username}}" class="uk-button uk-button-default">处理更多的图片</a>
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+
+</div>
+<script type="text/javascript" src="/templates/processer.js"></script>
+{% endblock %}
