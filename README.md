@@ -26,8 +26,28 @@
 - 数据库：[建立数据库](docs/How%20to%20install%20colorize%20module.md)
 - 模型下载：
 1. 下载彩色化模型：运行 `genColor/download_color_imagenet_model.sh` 和 `genColor/download_color_model.sh`
+2. 离线风格化模块：位于 `templates/genStyleOnBrowser/pretrained` 目录下
+3. 服务端命令行：`webServer.py --<option>`
+
+开关|意义|是否必要|默认值|示例
+-|-|-|-|-
+port|服务端绑定的端口|否|9999|9999
+addr|服务端绑定的IP|否|127.0.0.1|1.2.3.4
+dbusername|数据的登录名|否|aitest|myname
+dbpasswd|数据登录密码|否|test123|test123
+dbname|数据库名|否|aicolor|mydb
+dbaddr|数据服务器监听的地址|否|127.0.0.1|127.0.0.1
+dbport|数据服务器监听的端口|否|3306|3306(MySQL)
+4. 建议在服务端上使用 Docker 进行，我们已经做好了配置：
+- [链接：https://pan.baidu.com/s/1KzlWS_DOy04Z9H0QNceLyQ](https://pan.baidu.com/s/1KzlWS_DOy04Z9H0QNceLyQ)，提取码：`rv74`
+- Docker 运行命令行：`docker run -d -p 9999:9999 -v /path/to/AIColor:/root/AIColor -w /root/AIColor shu/torch7 python3 webServer.py --port=9999 --addr=0.0.0.0 --dbaddr=172.17.0.1 --python_exec=/usr/bin/python3`
+
 ## 客户端配置
 ![Web 客户端支持的浏览器版本](docs/uikiy_support_browsers.jpg)
+- 离线风格化需要支持 `Tensorflow.js` 的浏览器版本，具体[参见](https://js.tensorflow.org/#getting-started)
+- 在使用过程需要从服务器中加载模型。
+## 模型训练
+
 #### 使用的框架
 - 图像预测及输出：Tensorflow.js
 - 前端框架：uikit

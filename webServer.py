@@ -25,7 +25,6 @@ from jinja2 import Environment, FileSystemLoader
 
 
 parser = argparse.ArgumentParser(description="AIColorizer")
-parser.add_argument('--python_exec', default='/home/shu/anaconda3/envs/rl/bin/python')
 parser.add_argument('--port', default=9999)
 parser.add_argument('--addr', default='127.0.0.1')
 parser.add_argument('--dbusername', default='aitest')
